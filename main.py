@@ -20,6 +20,64 @@ def open_image():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
 
+def add_regular_text_watermark():
+    global original_image, last_processed_image
+    if original_image is None:
+        messagebox.showwarning("Warning", "Please select an image first.")
+        return
+
+    text = text_entry.get()
+    if not text:
+        messagebox.showwarning("Warning", "Please enter watermark text.")
+        return
+
+    try:
+        image_copy = original_image.copy()
+        draw = ImageDraw.Draw(image_copy)
+        font_size = int(image_copy.width / 20)
+        font = ImageFont.truetype("arial.ttf", font_size)
+        
+        # Use textbbox instead of textsize
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        
+        position = (image_copy.width - text_width - 10, image_copy.height - text_height - 10)
+        
+        draw.text(position, text, font=font, fill=(255, 255, 255, 128))
+        
+        last_processed_image = image_copy
+        preview_image(image_copy)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to add regular text watermark: {str(e)}")
+        
+def add_regular_logo_watermark():
+    global original_image, last_processed_image
+    if original_image is None:
+        messagebox.showwarning("Warning", "Please select an image first.")
+        return
+
+    logo_path = filedialog.askopenfilename(
+        title="Select logo image",
+        filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
+    )
+    if logo_path:
+        try:
+            logo = Image.open(logo_path).convert("RGBA")
+            image_copy = original_image.copy()
+            
+            # Resize logo
+            logo_width = image_copy.width // 4
+            logo_height = int(logo.height * (logo_width / logo.width))
+            logo = logo.resize((logo_width, logo_height), Image.Resampling.LANCZOS)
+            
+            position = (image_copy.width - logo_width - 10, image_copy.height - logo_height - 10)
+            image_copy.paste(logo, position, logo)
+            
+            last_processed_image = image_copy
+            preview_image(image_copy)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to add regular logo watermark: {str(e)}")
 
 def add_text_watermark():
     global original_image, last_processed_image
@@ -169,6 +227,7 @@ def create_subliminal_watermark(main_image, watermark, is_text=True):
 # Create the main window
 root = tk.Tk()
 root.title("Image Watermark App")
+root.minsize(width=300, height=300)
 
 # Create and pack widgets
 open_button = tk.Button(root, text="Open Image", command=open_image)
@@ -180,11 +239,17 @@ selected_file_label.pack()
 text_entry = tk.Entry(root, width=30)
 text_entry.pack(pady=5)
 
-text_watermark_button = tk.Button(root, text="Add Text Watermark", command=add_text_watermark)
+text_watermark_button = tk.Button(root, text="Add Subliminal Text Watermark", command=add_text_watermark)
 text_watermark_button.pack(pady=5)
 
-logo_watermark_button = tk.Button(root, text="Add Logo Watermark", command=add_logo_watermark)
+logo_watermark_button = tk.Button(root, text="Add Subliminal Logo Watermark", command=add_logo_watermark)
 logo_watermark_button.pack(pady=5)
+
+regular_text_watermark_button = tk.Button(root, text="Add Regular Text Watermark", command=add_regular_text_watermark)
+regular_text_watermark_button.pack(pady=5)
+
+regular_logo_watermark_button = tk.Button(root, text="Add Regular Logo Watermark", command=add_regular_logo_watermark)
+regular_logo_watermark_button.pack(pady=5)
 
 save_button = tk.Button(root, text="Save Image", command=save_image)
 save_button.pack(pady=10)

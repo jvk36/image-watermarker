@@ -20,35 +20,6 @@ def open_image():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
 
-
-# def add_text_watermark():
-#     if 'original_image' not in globals():
-#         messagebox.showwarning("Warning", "Please select an image first.")
-#         return
-
-#     text = text_entry.get()
-#     if not text:
-#         messagebox.showwarning("Warning", "Please enter watermark text.")
-#         return
-
-#     image_copy = original_image.copy()
-#     draw = ImageDraw.Draw(image_copy)
-    
-#     # You may need to adjust the font path or use a different font
-#     font = ImageFont.truetype("arial.ttf", 36)
-    
-#     # Get the bounding box of the text
-#     bbox = draw.textbbox((0, 0), text, font=font)
-#     text_width = bbox[2] - bbox[0]
-#     text_height = bbox[3] - bbox[1]
-    
-#     position = (image_copy.width - text_width - 10, image_copy.height - text_height - 10)
-    
-#     # Draw the text with a semi-transparent white color
-#     draw.text(position, text, font=font, fill=(255, 255, 255, 128))
-    
-#     preview_image(image_copy)
-
 def add_text_watermark():
     global original_image, last_processed_image
     if original_image is None:
@@ -66,35 +37,6 @@ def add_text_watermark():
         preview_image(watermarked_image)
     except Exception as e:
         messagebox.showerror("Error", f"Failed to add text watermark: {str(e)}")
-
-
-# def add_logo_watermark():
-#     global original_image, last_processed_image
-#     if 'original_image' not in globals() or original_image is None:
-#         messagebox.showwarning("Warning", "Please select an image first.")
-#         return
-
-#     logo_path = filedialog.askopenfilename(
-#         title="Select logo image",
-#         filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
-#     )
-#     if logo_path:
-#         try:
-#             logo = Image.open(logo_path).convert("RGBA")
-#             image_copy = original_image.copy()
-            
-#             # Resize logo to be 1/4 the width of the original image
-#             logo_width = image_copy.width // 4
-#             logo_height = int(logo.height * (logo_width / logo.width))
-#             logo = logo.resize((logo_width, logo_height), Image.Resampling.LANCZOS)
-            
-#             position = (image_copy.width - logo_width - 10, image_copy.height - logo_height - 10)
-#             image_copy.paste(logo, position, logo)
-            
-#             last_processed_image = image_copy
-#             preview_image(image_copy)
-#         except Exception as e:
-#             messagebox.showerror("Error", f"Failed to add logo: {str(e)}")
 
 def add_logo_watermark():
     global original_image, last_processed_image
@@ -115,18 +57,6 @@ def add_logo_watermark():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add logo watermark: {str(e)}")
 
-
-# def preview_image(img=None):
-#     global last_processed_image
-#     if img is None:
-#         img = original_image
-#     last_processed_image = img.copy()  # Store a copy of the processed image
-#     img_copy = img.copy()
-#     img_copy.thumbnail((300, 300))  # Resize for preview
-#     photo = ImageTk.PhotoImage(img_copy)
-#     preview_label.config(image=photo)
-#     preview_label.image = photo
-
 def preview_image(img=None):
     global last_processed_image
     if img is None:
@@ -139,23 +69,6 @@ def preview_image(img=None):
     photo = ImageTk.PhotoImage(img_copy)
     preview_label.config(image=photo)
     preview_label.image = photo
-
-# def save_image():
-#     global last_processed_image
-#     if last_processed_image is None:
-#         messagebox.showwarning("Warning", "No image to save.")
-#         return
-    
-#     file_path = filedialog.asksaveasfilename(
-#         defaultextension=".png",
-#         filetypes=[("PNG files", "*.png"), ("JPEG files", "*.jpg"), ("All files", "*.*")]
-#     )
-#     if file_path:
-#         try:
-#             last_processed_image.save(file_path)
-#             messagebox.showinfo("Success", "Image saved successfully!")
-#         except Exception as e:
-#             messagebox.showerror("Error", f"Failed to save image: {str(e)}")
 
 def save_image():
     global last_processed_image
@@ -178,131 +91,6 @@ def save_image():
             messagebox.showinfo("Success", "Image saved successfully!")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save image: {str(e)}")
-
-# def create_subliminal_watermark(main_image, watermark, is_text=True):
-#     # Create a new transparent image for the watermark
-#     watermark_layer = Image.new('RGBA', main_image.size, (0, 0, 0, 0))
-    
-#     if is_text:
-#         # Set up the font
-#         font_size = int(main_image.width / 10)  # Adjust size as needed
-#         font = ImageFont.truetype("arial.ttf", font_size)
-        
-#         # Create a draw object
-#         draw = ImageDraw.Draw(watermark_layer)
-        
-#         # Calculate text size
-#         bbox = draw.textbbox((0, 0), watermark, font=font)
-#         text_width = bbox[2] - bbox[0]
-#         text_height = bbox[3] - bbox[1]
-        
-#         # Calculate position (centered)
-#         x = (main_image.width - text_width) / 2
-#         y = (main_image.height - text_height) / 2
-        
-#         # Draw the text
-#         draw.text((x, y), watermark, font=font, fill=(255, 255, 255, 50))
-#     else:
-#         # Resize logo
-#         aspect_ratio = watermark.width / watermark.height
-#         new_width = int(main_image.width * 0.5)
-#         new_height = int(new_width / aspect_ratio)
-#         watermark = watermark.resize((new_width, new_height), Image.LANCZOS)
-        
-#         # Calculate position (centered)
-#         x = (main_image.width - new_width) // 2
-#         y = (main_image.height - new_height) // 2
-        
-#         # Paste the logo
-#         watermark_layer.paste(watermark, (x, y), watermark)
-    
-#     # Rotate the watermark slightly for a diagonal effect
-#     watermark_layer = watermark_layer.rotate(30, expand=1)
-    
-#     # Scale the watermark to be larger than the main image
-#     scale = 1.5
-#     watermark_layer = watermark_layer.resize((int(main_image.width * scale), int(main_image.height * scale)))
-    
-#     # Calculate position to center the oversized watermark
-#     paste_x = (main_image.width - watermark_layer.width) // 2
-#     paste_y = (main_image.height - watermark_layer.height) // 2
-    
-#     # Create a new image blending the main image and the watermark
-#     result = Image.new('RGBA', main_image.size, (0, 0, 0, 0))
-#     result.paste(main_image, (0, 0))
-#     result.paste(watermark_layer, (paste_x, paste_y), watermark_layer)
-    
-#     # Adjust the brightness and contrast of the result
-#     enhancer = ImageEnhance.Brightness(result)
-#     result = enhancer.enhance(1.1)  # Slightly increase brightness
-    
-#     enhancer = ImageEnhance.Contrast(result)
-#     result = enhancer.enhance(1.1)  # Slightly increase contrast
-    
-#     return result
-
-# def create_subliminal_watermark(main_image, watermark, is_text=True):
-#     # Convert main image to RGBA if it's not already
-#     if main_image.mode != 'RGBA':
-#         main_image = main_image.convert('RGBA')
-    
-#     # Create a new transparent image for the watermark
-#     watermark_layer = Image.new('RGBA', main_image.size, (0, 0, 0, 0))
-    
-#     if is_text:
-#         # Text watermark code (unchanged)
-#         font_size = int(main_image.width / 10)
-#         font = ImageFont.truetype("arial.ttf", font_size)
-#         draw = ImageDraw.Draw(watermark_layer)
-#         bbox = draw.textbbox((0, 0), watermark, font=font)
-#         text_width = bbox[2] - bbox[0]
-#         text_height = bbox[3] - bbox[1]
-#         x = (main_image.width - text_width) / 2
-#         y = (main_image.height - text_height) / 2
-#         draw.text((x, y), watermark, font=font, fill=(255, 255, 255, 50))
-#     else:
-#         # Image watermark
-#         if watermark.mode != 'RGBA':
-#             watermark = watermark.convert('RGBA')
-        
-#         # Resize logo
-#         aspect_ratio = watermark.width / watermark.height
-#         new_width = int(main_image.width * 0.5)
-#         new_height = int(new_width / aspect_ratio)
-#         watermark = watermark.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        
-#         # Calculate position (centered)
-#         x = (main_image.width - new_width) // 2
-#         y = (main_image.height - new_height) // 2
-        
-#         # Paste the logo with reduced opacity
-#         watermark = Image.blend(Image.new('RGBA', watermark.size, (0, 0, 0, 0)), watermark, 0.3)
-#         watermark_layer.paste(watermark, (x, y), watermark)
-    
-#     # Rotate the watermark slightly for a diagonal effect
-#     watermark_layer = watermark_layer.rotate(30, expand=1)
-    
-#     # Scale the watermark to be larger than the main image
-#     scale = 1.5
-#     new_size = (int(main_image.width * scale), int(main_image.height * scale))
-#     watermark_layer = watermark_layer.resize(new_size, Image.Resampling.LANCZOS)
-    
-#     # Calculate position to center the oversized watermark
-#     paste_x = (main_image.width - watermark_layer.width) // 2
-#     paste_y = (main_image.height - watermark_layer.height) // 2
-    
-#     # Blend the watermark with the main image
-#     result = Image.alpha_composite(main_image, Image.new('RGBA', main_image.size, (0, 0, 0, 0)))
-#     result.paste(watermark_layer, (paste_x, paste_y), watermark_layer)
-    
-#     # Adjust the brightness and contrast of the result
-#     enhancer = ImageEnhance.Brightness(result)
-#     result = enhancer.enhance(1.1)  # Slightly increase brightness
-    
-#     enhancer = ImageEnhance.Contrast(result)
-#     result = enhancer.enhance(1.1)  # Slightly increase contrast
-    
-#     return result
 
 def create_subliminal_watermark(main_image, watermark, is_text=True):
     # Convert main image to RGBA if it's not already

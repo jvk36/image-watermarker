@@ -20,29 +20,6 @@ def open_image():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
 
-# def add_text_watermark():
-#     if 'original_image' not in globals():
-#         messagebox.showwarning("Warning", "Please select an image first.")
-#         return
-
-#     text = text_entry.get()
-#     if not text:
-#         messagebox.showwarning("Warning", "Please enter watermark text.")
-#         return
-
-#     image_copy = original_image.copy()
-#     draw = ImageDraw.Draw(image_copy)
-    
-#     # You may need to adjust the font path or use a different font
-#     font = ImageFont.truetype("arial.ttf", 36)
-    
-#     text_width, text_height = draw.textsize(text, font)
-#     position = (image_copy.width - text_width - 10, image_copy.height - text_height - 10)
-    
-#     draw.text(position, text, font=font, fill=(255, 255, 255, 128))
-    
-#     preview_image(image_copy)
-
 def add_text_watermark():
     if 'original_image' not in globals():
         messagebox.showwarning("Warning", "Please select an image first.")
@@ -70,32 +47,6 @@ def add_text_watermark():
     draw.text(position, text, font=font, fill=(255, 255, 255, 128))
     
     preview_image(image_copy)
-
-# def add_logo_watermark():
-#     if 'original_image' not in globals():
-#         messagebox.showwarning("Warning", "Please select an image first.")
-#         return
-
-#     logo_path = filedialog.askopenfilename(
-#         title="Select logo image",
-#         filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
-#     )
-#     if logo_path:
-#         try:
-#             logo = Image.open(logo_path)
-#             image_copy = original_image.copy()
-            
-#             # Resize logo to be 1/4 the width of the original image
-#             logo_width = image_copy.width // 4
-#             logo_height = int(logo.height * (logo_width / logo.width))
-#             logo = logo.resize((logo_width, logo_height), Image.ANTIALIAS)
-            
-#             position = (image_copy.width - logo_width - 10, image_copy.height - logo_height - 10)
-#             image_copy.paste(logo, position, logo)
-            
-#             preview_image(image_copy)
-#         except Exception as e:
-#             messagebox.showerror("Error", f"Failed to add logo: {str(e)}")
 
 def add_logo_watermark():
     global original_image, last_processed_image
@@ -125,14 +76,6 @@ def add_logo_watermark():
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add logo: {str(e)}")
 
-# def preview_image(img=None):
-#     if img is None:
-#         img = original_image
-#     img.thumbnail((300, 300))  # Resize for preview
-#     photo = ImageTk.PhotoImage(img)
-#     preview_label.config(image=photo)
-#     preview_label.image = photo
-
 def preview_image(img=None):
     global last_processed_image
     if img is None:
@@ -143,22 +86,6 @@ def preview_image(img=None):
     photo = ImageTk.PhotoImage(img_copy)
     preview_label.config(image=photo)
     preview_label.image = photo
-
-# def save_image():
-#     if 'original_image' not in globals():
-#         messagebox.showwarning("Warning", "No image to save.")
-#         return
-    
-#     file_path = filedialog.asksaveasfilename(
-#         defaultextension=".png",
-#         filetypes=[("PNG files", "*.png"), ("JPEG files", "*.jpg"), ("All files", "*.*")]
-#     )
-#     if file_path:
-#         try:
-#             preview_label.image.save(file_path)
-#             messagebox.showinfo("Success", "Image saved successfully!")
-#         except Exception as e:
-#             messagebox.showerror("Error", f"Failed to save image: {str(e)}")
 
 def save_image():
     global last_processed_image
